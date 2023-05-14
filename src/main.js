@@ -1,3 +1,5 @@
+import { OffersModel } from './model/offersModel.js';
+import { PointsModel } from './model/pointsModel.js';
 import BoardPresenter from './presenter/presenter.js';
 import {RenderPosition, render} from './render.js';
 import EventsListView from './view/events-list.js';
@@ -12,7 +14,13 @@ const siteTripMainElement = siteHeaderElement.querySelector('.trip-main');
 const siteFiltersElement = siteHeaderElement.querySelector('.trip-controls__filters');
 const siteTripEventsElement = siteMainElement.querySelector('.trip-events');
 
-const boardPresenter = new BoardPresenter({mainElement: siteMainElement});
+const pointsModel = new PointsModel();
+const offersModel = new OffersModel();
+const boardPresenter = new BoardPresenter({
+  mainElement: siteMainElement,
+  pointsModel,
+  offersModel
+});
 
 render(new HeaderView(), siteTripMainElement, RenderPosition.AFTERBEGIN);
 render(new FiltersView(), siteFiltersElement);
