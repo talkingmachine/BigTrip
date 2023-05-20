@@ -1,8 +1,7 @@
+import { RenderPosition, render } from './framework/render.js';
 import { OffersModel } from './model/offersModel.js';
 import { PointsModel } from './model/pointsModel.js';
 import BoardPresenter from './presenter/presenter.js';
-import {RenderPosition, render} from './render.js';
-import EventsListView from './view/events-list.js';
 import FiltersView from './view/filters.js';
 import HeaderView from './view/header.js';
 import SortView from './view/sort.js';
@@ -25,7 +24,5 @@ const boardPresenter = new BoardPresenter({
 render(new HeaderView(), siteTripMainElement, RenderPosition.AFTERBEGIN);
 render(new FiltersView(), siteFiltersElement);
 render(new SortView(), siteTripEventsElement);
-render(new EventsListView(), siteTripEventsElement);
-
 
 boardPresenter.init();
