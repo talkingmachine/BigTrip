@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 
 function createHeaderTemplate() {
@@ -16,20 +16,8 @@ function createHeaderTemplate() {
   </section>`;
 }
 
-export default class HeaderView {
-  getTemplate() {
+export default class HeaderView extends AbstractView{
+  get template() {
     return createHeaderTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

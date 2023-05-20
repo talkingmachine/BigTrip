@@ -1,9 +1,9 @@
-import { DEFAULT_POINT } from '../../consts';
-import { createElement } from '../../render';
-import { getHumanizedEditTime, toCapitalized } from '../../utils';
+import { DEFAULT_POINT } from '../consts';
+import AbstractView from '../framework/view/abstract-view';
+import { getHumanizedEditTime, toCapitalized } from '../utils';
 
 
-function createEventsListTemplate(point, offers) {
+function createEventEditTemplate(point, offers) {
   const {basePrice, dateFrom, dateTo, destination, type} = point;
   const offersTitleList = offers.map((offer) => offer.title);
 
@@ -99,7 +99,10 @@ function createEventsListTemplate(point, offers) {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -155,42 +158,23 @@ function createEventsListTemplate(point, offers) {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
-            </div>
-          </div>
+          <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
+          </section>
         </section>
-      </section>
-    </form>
+      </form>
   </li>`;
 }
 
-export default class PointView {
+export default class EventEditView extends AbstractView{
+  #point;
+  #offers;
   constructor({point, offers}) {
-    this.point = point;
-    this.offers = offers;
+    super();
+    this.#point = point;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createEventsListTemplate(this.point, this.offers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEventEditTemplate(this.#point, this.#offers);
   }
 }
