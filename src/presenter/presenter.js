@@ -1,7 +1,9 @@
-import { render, replace } from '../framework/render.js';
+import { RenderPosition, render, replace } from '../framework/render.js';
 import EventEditView from '../view/event-edit.js';
 import EventView from '../view/event.js';
 import EventsListView from '../view/events-list.js';
+import HeaderView from '../view/header.js';
+import EmptyView from '../view/empty.js';
 
 export default class BoardPresenter {
   #eventListComponent = new EventsListView();
@@ -22,22 +24,29 @@ export default class BoardPresenter {
     this.#points = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
 
+    const siteHeaderElement = document.querySelector('.page-header');
+    const siteTripMainElement = siteHeaderElement.querySelector('.trip-main');
     const siteEventListContainer = this.#mainElement.querySelector('.trip-events');
 
-    render(this.#eventListComponent, siteEventListContainer);
-    for (let i = 0; i < this.#points.length; i++) {
-      const currentTypeOffers = this.#offers.find((offer) => offer.type === this.#points[i].type).offers;
-      const currentPointOffersList = this.#points[i].offers;
-      const eventData = {
-        point: this.#points[i],
-        offers: currentTypeOffers.filter((offer) => currentPointOffersList.includes(offer.id))
-      };
-
-      this.#renderEvent(eventData);
+    if (this.#points.length > 0) {
+      render(new HeaderView(this.#points), siteTripMainElement, RenderPosition.AFTERBEGIN);
+      render(this.#eventListComponent, siteEventListContainer);
+      for (let i = 0; i < this.#points.length; i++) {
+        this.#renderEvent(i);
+      }
+    } else {
+      render(new EmptyView(), siteEventListContainer);
     }
   }
 
-  #renderEvent(eventData) {
+  #renderEvent(i) {
+    const currentTypeOffers = this.#offers.find((offer) => offer.type === this.#points[i].type).offers;
+    const currentPointOffersList = this.#points[i].offers;
+    const eventData = {
+      point: this.#points[i],
+      offers: currentTypeOffers.filter((offer) => currentPointOffersList.includes(offer.id))
+    };
+
     const eventComponent = new EventView({
       ...eventData,
       onEditClick: onEditClick
@@ -83,6 +92,7 @@ export default class BoardPresenter {
       formRollupButtonComponent.removeEventListener('keydown', formRollupHandler);
       formComponent.removeEventListener('submit', formSubmitHandler);
     }
+
     render(eventComponent, this.#eventListComponent.element);
   }
 }

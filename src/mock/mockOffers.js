@@ -29,4 +29,9 @@ export const getMockOffers = () => ([
       }
     ]
   },
+  {
+    type: 'flight',
+    offers: [
+    ]
+  },
 ]);
