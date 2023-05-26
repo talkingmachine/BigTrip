@@ -12,7 +12,7 @@ export const getMockPoints = () => ([
     type: 'taxi'
   },
   {
-    id: 'test-id',
+    id: 'test-id1',
     basePrice: 500,
     dateFrom: '2019-07-12T14:55:55.845Z',
     dateTo: '2019-07-12T17:02:03.375Z',
@@ -25,7 +25,7 @@ export const getMockPoints = () => ([
     type: 'sightseeing'
   },
   {
-    id: 'test-id',
+    id: 'test-id2',
     basePrice: 20,
     dateFrom: '2019-07-12T22:55:55.845Z',
     dateTo: '2019-07-12T23:02:03.375Z',

@@ -1,24 +1,24 @@
 import { render } from './framework/render.js';
 import { OffersModel } from './model/offersModel.js';
 import { PointsModel } from './model/pointsModel.js';
-import BoardPresenter from './presenter/presenter.js';
+import TripPresenter from './presenter/trip-presenter.js';
 import FiltersView from './view/filters.js';
 import SortView from './view/sort.js';
 
-const siteMainElement = document.querySelector('.page-main');
-const siteHeaderElement = document.querySelector('.page-header');
-const siteFiltersElement = siteHeaderElement.querySelector('.trip-controls__filters');
-const siteTripEventsElement = siteMainElement.querySelector('.trip-events');
+const siteTripMainElement = document.querySelector('.trip-main');
+const siteFiltersElement = document.querySelector('.trip-controls__filters');
+const listContainerElement = document.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
-const boardPresenter = new BoardPresenter({
-  mainElement: siteMainElement,
+const tripPresenter = new TripPresenter({
+  headerContainerElement: siteTripMainElement,
+  listContainerElement: listContainerElement,
   pointsModel,
   offersModel
 });
 
 render(new FiltersView(), siteFiltersElement);
-render(new SortView(), siteTripEventsElement);
+render(new SortView(), listContainerElement);
 
-boardPresenter.init();
+tripPresenter.init();

@@ -168,13 +168,32 @@ function createEventEditTemplate(point, offers) {
 export default class EventEditView extends AbstractView{
   #point;
   #offers;
-  constructor({point, offers}) {
+  #replaceEditToEvent;
+  #onEscKeydownHandler;
+
+  constructor({point, offers, replaceEditToEvent, onEscKeydownHandler}) {
     super();
     this.#point = point;
     this.#offers = offers;
+    this.#replaceEditToEvent = replaceEditToEvent;
+    this.#onEscKeydownHandler = onEscKeydownHandler;
+
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
 
   get template() {
     return createEventEditTemplate(this.#point, this.#offers);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    document.removeEventListener('keydown', this.#onEscKeydownHandler);
+    this.#replaceEditToEvent();
+  };
+
+  #rollupClickHandler = () => {
+    document.removeEventListener('keydown', this.#onEscKeydownHandler);
+    this.#replaceEditToEvent();
+  };
 }
