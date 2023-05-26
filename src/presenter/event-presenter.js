@@ -61,6 +61,11 @@ export default class EventPresenter {
     remove(prevEventEditComponent);
   }
 
+  destroy() {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
+  }
+
   closeEditMode = () => {
     if (this.#eventsListContainer.contains(this.#eventEditComponent.element)) {
       replace(this.#eventComponent, this.#eventEditComponent);
@@ -86,6 +91,4 @@ export default class EventPresenter {
   #onStarClick = () => {
     this.#onDatachange({...this.#event, isFavorite: !this.#event.isFavorite});
   };
-
-
 }

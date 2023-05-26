@@ -4,6 +4,8 @@ import EmptyView from '../view/empty.js';
 import EventPresenter from './event-presenter.js';
 import HeaderPresenter from './header-presenter.js';
 import { updateItem } from '../utils/updateItems.js';
+import SortView from '../view/sort.js';
+import { sortEventsByDay, sortEventsByPrice, sortEventsByTime } from '../utils/sorting-options.js';
 
 export default class TripPresenter {
   #eventsListComponent = new EventsListView();
@@ -27,15 +29,33 @@ export default class TripPresenter {
     this.#offers = [...this.#offersModel.offers];
 
     if (this.#points.length > 0) {
+      this.#renderSort();
       this.#renderHeader();
-      this.#renderEventList();
-      for (let i = 0; i < this.#points.length; i++) {
-        this.#renderEvent(this.#points[i]);
-      }
+      this.#renderEvents(this.#points);
     } else {
       this.#renderEmpty();
     }
   }
+
+  #sortPointsHandler = (sortType) => {
+    const prevPoints = JSON.parse(JSON.stringify(this.#points));
+    switch (sortType) {
+      case 'sort-day':
+        sortEventsByDay(prevPoints);
+        break;
+      case 'sort-time':
+        sortEventsByTime(prevPoints);
+        break;
+      case 'sort-price':
+        sortEventsByPrice(prevPoints);
+        break;
+    }
+
+    if (JSON.stringify(prevPoints) !== JSON.stringify(this.#points)) {
+      this.#renderEvents(prevPoints);
+      this.#points = prevPoints;
+    }
+  };
 
   #pointChangeHandler = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
@@ -45,6 +65,13 @@ export default class TripPresenter {
   #pointsCloseEditMode = () => {
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.closeEditMode());
   };
+
+  #renderSort() {
+    const sortView = new SortView({
+      sortHandler: this.#sortPointsHandler
+    });
+    render(sortView, this.#listContainerElement);
+  }
 
   #renderEvent(event) {
     const eventPresenter = new EventPresenter({
@@ -61,8 +88,14 @@ export default class TripPresenter {
     render(new EmptyView(), this.#listContainerElement);
   }
 
-  #renderEventList() {
-    render(this.#eventsListComponent, this.#listContainerElement);
+  #renderEvents(events) {
+    if (!this.#listContainerElement.contains(this.#eventsListComponent.element)) {
+      render(this.#eventsListComponent, this.#listContainerElement);
+    }
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    for (let i = 0; i < events.length; i++) {
+      this.#renderEvent(events[i]);
+    }
   }
 
   #renderHeader() {
