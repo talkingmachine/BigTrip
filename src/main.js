@@ -1,4 +1,5 @@
 import { render } from './framework/render.js';
+import { DestinationsModel } from './model/destinationsModel.js';
 import { OffersModel } from './model/offersModel.js';
 import { PointsModel } from './model/pointsModel.js';
 import TripPresenter from './presenter/trip-presenter.js';
@@ -10,11 +11,13 @@ const listContainerElement = document.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
+const destinationsModel = new DestinationsModel();
 const tripPresenter = new TripPresenter({
   headerContainerElement: siteTripMainElement,
   listContainerElement: listContainerElement,
   pointsModel,
-  offersModel
+  offersModel,
+  destinationsModel
 });
 
 render(new FiltersView(), siteFiltersElement);

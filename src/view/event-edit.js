@@ -1,11 +1,12 @@
-import { DEFAULT_POINT } from '../consts';
-import AbstractView from '../framework/view/abstract-view';
+import { DEFAULT_DESTINATION, DEFAULT_POINT } from '../consts';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getHumanizedEditTime, toCapitalized } from '../utils';
+import { getDestinationPictures } from './get-destination-pictures';
+import { getEventEditOffers } from './get-event-edit-offers';
 
 
-function createEventEditTemplate(point, offers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = point;
-  const offersTitleList = offers.map((offer) => offer.title);
+function createEventEditTemplate({point, destination, offers}) {
+  const {basePrice, dateFrom, dateTo, type} = point;
 
   return `
   <li class="trip-events__item">
@@ -74,7 +75,7 @@ function createEventEditTemplate(point, offers) {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${toCapitalized(type ? type : DEFAULT_POINT.type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? destination : DEFAULT_POINT.destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination ? point.destination : DEFAULT_POINT.destination}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -105,85 +106,94 @@ function createEventEditTemplate(point, offers) {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${offersTitleList.includes('Add luggage') ? 'checked' : ''}>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">30</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" ${offersTitleList.includes('Switch to comfort') ? 'checked' : ''}>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">100</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal ${offersTitleList.includes('Add meal') ? 'checked' : ''}">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">15</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats ${offersTitleList.includes('Choose seats') ? 'checked' : ''}">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">5</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train ${offersTitleList.includes('Travel by train') ? 'checked' : ''}">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">40</span>
-              </label>
-            </div>
-          </div>
-        </section>
+        ${getEventEditOffers(offers, point.offers)}
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
+          <p class="event__destination-description">${destination.description}</p>
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${getDestinationPictures(destination.pictures)}
+            </div>
+          </div>
           </section>
         </section>
       </form>
   </li>`;
 }
 
-export default class EventEditView extends AbstractView{
-  #point;
+export default class EventEditView extends AbstractStatefulView{
   #offers;
+  #destinations;
   #replaceEditToEvent;
   #onEscKeydownHandler;
 
-  constructor({point, offers, replaceEditToEvent, onEscKeydownHandler}) {
+  constructor({point, offers, destinations, replaceEditToEvent, onEscKeydownHandler}) {
     super();
-    this.#point = point;
+    this._setState(point);
     this.#offers = offers;
+    this.#destinations = destinations;
     this.#replaceEditToEvent = replaceEditToEvent;
     this.#onEscKeydownHandler = onEscKeydownHandler;
-
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEventEditTemplate(this.#point, this.#offers);
+    return createEventEditTemplate({
+      point: this._state,
+      destination: this.#pickCurrentDestination(),
+      offers: this.#pickCurrentTypeOffers(),
+    });
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeDestinationHandler);
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#changeOfferHandler);
+    }
+  }
+
+  #changeOfferHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.checked) {
+      this.updateElement({
+        offers: [...this._state.offers, evt.target.id],
+      });
+    } else {
+      this.updateElement({
+        offers: this._state.offers.filter((offerId) => offerId !== evt.target.id),
+      });
+    }
+  };
+
+  #changeTypeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: []
+    });
+  };
+
+  #changeDestinationHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destination: evt.target.value
+    });
+  };
+
+  #pickCurrentTypeOffers() {
+    return this.#offers.find((offer) => offer.type === this._state.type).offers;
+  }
+
+  #pickCurrentDestination() {
+    const destinaion = this.#destinations.find((destination) => destination.name === this._state.destination);
+    if (destinaion) {
+      return destinaion;
+    }
+    return DEFAULT_DESTINATION;
   }
 
   #formSubmitHandler = (evt) => {

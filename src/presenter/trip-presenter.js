@@ -13,20 +13,24 @@ export default class TripPresenter {
   #listContainerElement = null;
   #pointsModel = null;
   #offersModel = null;
+  #destinationsModel = null;
   #points = null;
   #offers = null;
+  #destinations = null;
   #eventPresenters = new Map();
 
-  constructor({headerContainerElement, listContainerElement, pointsModel, offersModel}) {
+  constructor({headerContainerElement, listContainerElement, pointsModel, offersModel, destinationsModel}) {
     this.#headerContainerElement = headerContainerElement;
     this.#listContainerElement = listContainerElement;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
   }
 
   init() {
     this.#points = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
 
     if (this.#points.length > 0) {
       this.#renderSort();
@@ -38,7 +42,8 @@ export default class TripPresenter {
   }
 
   #sortPointsHandler = (sortType) => {
-    const prevPoints = JSON.parse(JSON.stringify(this.#points));
+    const stringifiedPoints = JSON.stringify(this.#points);
+    const prevPoints = JSON.parse(stringifiedPoints);
     switch (sortType) {
       case 'sort-day':
         sortEventsByDay(prevPoints);
@@ -51,7 +56,7 @@ export default class TripPresenter {
         break;
     }
 
-    if (JSON.stringify(prevPoints) !== JSON.stringify(this.#points)) {
+    if (JSON.stringify(prevPoints) !== stringifiedPoints) {
       this.#renderEvents(prevPoints);
       this.#points = prevPoints;
     }
@@ -77,6 +82,7 @@ export default class TripPresenter {
     const eventPresenter = new EventPresenter({
       eventsListContainer: this.#eventsListComponent.element,
       offers: this.#offers,
+      destinations: this.#destinations,
       onDatachange: this.#pointChangeHandler,
       pointsCloseEditMode: this.#pointsCloseEditMode
     });

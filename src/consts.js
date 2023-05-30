@@ -10,3 +10,9 @@ export const DEFAULT_POINT = {
   destination: 'Amsterdam',
   type: 'taxi'
 };
+export const DEFAULT_DESTINATION = {
+  description: 'Sorry, your destination not found',
+  name: 'Nowhere',
+  pictures: [
+  ]
+};
