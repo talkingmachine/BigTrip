@@ -5,6 +5,7 @@ import EventView from '../view/event.js';
 export default class EventPresenter {
   #eventsListContainer = null;
   #offers = null;
+  #destinations = null;
   #currentTypeOffers = null;
   #currentPointOffersList = null;
   #event = null;
@@ -14,9 +15,10 @@ export default class EventPresenter {
   #pointsCloseEditMode = null;
 
 
-  constructor({eventsListContainer, offers, onDatachange, pointsCloseEditMode}) {
+  constructor({eventsListContainer, offers, destinations, onDatachange, pointsCloseEditMode}) {
     this.#eventsListContainer = eventsListContainer;
     this.#offers = offers;
+    this.#destinations = destinations;
     this.#onDatachange = onDatachange;
     this.#pointsCloseEditMode = pointsCloseEditMode;
   }
@@ -29,18 +31,18 @@ export default class EventPresenter {
 
     this.#currentTypeOffers = this.#offers.find((offer) => offer.type === this.#event.type).offers;
     this.#currentPointOffersList = this.#event.offers;
-    const eventData = {
-      point: this.#event,
-      offers: this.#currentTypeOffers.filter((offer) => this.#currentPointOffersList.includes(offer.id))
-    };
+
     this.#eventComponent = new EventView({
-      ...eventData,
+      point: this.#event,
+      offers: this.#currentTypeOffers.filter((offer) => this.#currentPointOffersList.includes(offer.id)),
       replaceEventToEdit: this.#replaceEventToEdit,
       onEscKeydownHandler: this.#onEscKeydownHandler,
       onStarClickHandler: this.#onStarClick
     });
     this.#eventEditComponent = new EventEditView({
-      ...eventData,
+      point: this.#event,
+      offers: this.#offers,
+      destinations: this.#destinations,
       replaceEditToEvent: this.#replaceEditToEvent,
       onEscKeydownHandler: this.#onEscKeydownHandler
     });

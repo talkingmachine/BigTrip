@@ -32,6 +32,66 @@ export const getMockOffers = () => ([
   {
     type: 'flight',
     offers: [
+      {
+        id: 'undef-offer',
+        title: 'flight test offer',
+        price: 111
+      }
+    ]
+  },
+  {
+    type: 'bus',
+    offers: [
+      {
+        id: 'undef-offer',
+        title: 'bus test offer',
+        price: 666
+      }
+    ]
+  },
+  {
+    type: 'train',
+    offers: [
+      {
+        id: 'undef-offer',
+        title: 'train test offer',
+        price: 666
+      }
+    ]
+  },
+  {
+    type: 'ship',
+    offers: [
+      {
+        id: 'undef-offer',
+        title: 'ship test offer',
+        price: 666
+      }
+    ]
+  },
+  {
+    type: 'drive',
+    offers: [
+      {
+        id: 'undef-offer',
+        title: 'drive test offer',
+        price: 666
+      }
+    ]
+  },
+  {
+    type: 'check-in',
+    offers: [
+    ]
+  },
+  {
+    type: 'restaurant',
+    offers: [
+      {
+        id: 'check-in-offer',
+        title: 'restaurant test offer',
+        price: 666
+      }
     ]
   },
 ]);

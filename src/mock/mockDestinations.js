@@ -1,7 +1,7 @@
-export const getMockDestination = () => ([
+export const getMockDestinations = () => ([
   {
     id: 'cfe416cq-10xa-ye10-8077-2fs9a01edcab',
-    description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
+    description: 'Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, its renowned for its skiing.',
     name: 'Chamonix',
     pictures: [
       {
@@ -11,13 +11,24 @@ export const getMockDestination = () => ([
     ]
   },
   {
-    id: 'test-id',
+    id: 'test-id1',
     description: 'Test Description',
-    name: 'Test Name',
+    name: 'Alaska',
     pictures: [
       {
         src: 'http://picsum.photos/300/200?r=0.0762563005163317',
-        description: 'Test 1st pic description'
+        description: 'Alaska desc'
+      }
+    ]
+  },
+  {
+    id: 'test-id2',
+    description: 'Test Description',
+    name: 'Amsterdam',
+    pictures: [
+      {
+        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        description: 'Amsterdam desc'
       }
     ]
   },
