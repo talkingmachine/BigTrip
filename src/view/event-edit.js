@@ -1,8 +1,11 @@
-import { DEFAULT_DESTINATION, DEFAULT_POINT } from '../consts';
+import { DEFAULT_DESTINATION, DEFAULT_POINT, EDIT_TIME_FORMAT } from '../consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getHumanizedEditTime, toCapitalized } from '../utils';
 import { getDestinationPictures } from './get-destination-pictures';
 import { getEventEditOffers } from './get-event-edit-offers';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 function createEventEditTemplate({point, destination, offers}) {
@@ -85,10 +88,10 @@ function createEventEditTemplate({point, destination, offers}) {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizedEditTime(dateFrom ? dateFrom : DEFAULT_POINT.dateFrom)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizedEditTime(dateTo ? dateTo : DEFAULT_POINT.dateTo)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -123,10 +126,12 @@ function createEventEditTemplate({point, destination, offers}) {
 }
 
 export default class EventEditView extends AbstractStatefulView{
-  #offers;
-  #destinations;
-  #replaceEditToEvent;
-  #onEscKeydownHandler;
+  #offers = null;
+  #destinations = null;
+  #replaceEditToEvent = null;
+  #onEscKeydownHandler = null;
+  #dateToPicker = null;
+  #dateFromPicker = null;
 
   constructor({point, offers, destinations, replaceEditToEvent, onEscKeydownHandler}) {
     super();
@@ -154,7 +159,52 @@ export default class EventEditView extends AbstractStatefulView{
     if (this.element.querySelector('.event__available-offers')) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#changeOfferHandler);
     }
+    this.#setDatepickers();
   }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#dateToPicker || this.#dateFromPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+  }
+
+  #setDatepickers () {
+    this.#dateFromPicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: EDIT_TIME_FORMAT,
+        defaultDate: this._state.dateFrom ? this._state.dateFrom : DEFAULT_POINT.dateFrom, // ${getHumanizedEditTime(dateFrom ? dateFrom : DEFAULT_POINT.dateFrom)}
+        onChange: this.#dateFromChangeHandler,
+        enableTime: true,
+      },
+    );
+    this.#dateToPicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: EDIT_TIME_FORMAT,
+        defaultDate: this._state.dateTo ? this._state.dateTo : DEFAULT_POINT.dateTo, // ${getHumanizedEditTime(dateTo ? dateTo : DEFAULT_POINT.dateTo)}
+        onChange: this.#dateToChangeHandler,
+        enableTime: true,
+      },
+    );
+  }
+
+  #dateFromChangeHandler = ([date]) => {
+    this.updateElement({
+      dateFrom: date
+    });
+  };
+
+  #dateToChangeHandler = ([date]) => {
+    this.updateElement({
+      dateTo: date
+    });
+  };
 
   #changeOfferHandler = (evt) => {
     evt.preventDefault();
