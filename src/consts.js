@@ -16,3 +16,4 @@ export const DEFAULT_DESTINATION = {
   pictures: [
   ]
 };
+export const EDIT_TIME_FORMAT = 'd/m/Y H:i';
