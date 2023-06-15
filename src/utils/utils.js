@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { DATE_FORMATS } from './consts';
+import { DATE_FORMATS } from '../consts';
 
 export const getStartEndTime = (dateFrom, dateTo) => {
   const date1 = dayjs(dateFrom);
@@ -22,6 +22,4 @@ export const getStartEndTime = (dateFrom, dateTo) => {
 
 export const getHumanizedTime = (date) => dayjs(date).format(DATE_FORMATS.time);
 export const getHumanizedDate = (date) => dayjs(date).format(DATE_FORMATS.date);
-export const getHumanizedEditTime = (date) => dayjs(date).format(DATE_FORMATS.edit);
 export const toCapitalized = (str) => str[0] + str.slice(1);
-
