@@ -1,4 +1,5 @@
-import { remove, render, replace } from '../framework/render.js';
+import { UpdateType, UserAction } from '../consts.js';
+import { RenderPosition, remove, render, replace } from '../framework/render.js';
 import EventEditView from '../view/event-edit.js';
 import EventView from '../view/event.js';
 
@@ -11,16 +12,18 @@ export default class EventPresenter {
   #event = null;
   #eventComponent = null;
   #eventEditComponent = null;
-  #onDatachange = null;
+  #onDataChange = null;
   #pointsCloseEditMode = null;
+  #isNew = false;
 
 
-  constructor({eventsListContainer, offers, destinations, onDatachange, pointsCloseEditMode}) {
+  constructor({eventsListContainer, offers, destinations, onDataChange, pointsCloseEditMode, isNew}) {
     this.#eventsListContainer = eventsListContainer;
     this.#offers = offers;
     this.#destinations = destinations;
-    this.#onDatachange = onDatachange;
+    this.#onDataChange = onDataChange;
     this.#pointsCloseEditMode = pointsCloseEditMode;
+    this.#isNew = isNew;
   }
 
   init(event) {
@@ -43,12 +46,20 @@ export default class EventPresenter {
       point: this.#event,
       offers: this.#offers,
       destinations: this.#destinations,
-      replaceEditToEvent: this.#replaceEditToEvent,
-      onEscKeydownHandler: this.#onEscKeydownHandler
+      onFormCloseClickHandler: this.#onFormCloseClickHandler,
+      onFormSubmitHandler: this.#onFormSubmitHandler,
+      onDeleteClickHandler: this.#onDeleteClickHandler,
+      isNew: this.#isNew
     });
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
-      render(this.#eventComponent, this.#eventsListContainer);
+      if (this.#isNew) {
+        this.#pointsCloseEditMode();
+      }
+      render(
+        this.#isNew ? this.#eventEditComponent : this.#eventComponent,
+        this.#eventsListContainer,
+        this.#isNew ? RenderPosition.AFTERBEGIN : RenderPosition.BEFOREEND);
       return;
     }
 
@@ -83,6 +94,28 @@ export default class EventPresenter {
     replace(this.#eventComponent, this.#eventEditComponent);
   };
 
+  #onFormSubmitHandler = (point) => {
+    try {
+      this.#onDataChange(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        point,
+      );
+    } catch {
+      this.#onDataChange(
+        UserAction.ADD_POINT,
+        UpdateType.MINOR,
+        point,
+      );
+    }
+
+    this.#replaceEditToEvent();
+  };
+
+  #onFormCloseClickHandler = () => {
+    this.#replaceEditToEvent();
+  };
+
   #onEscKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       document.removeEventListener('keydown', this.#onEscKeydownHandler);
@@ -90,7 +123,23 @@ export default class EventPresenter {
     }
   };
 
+  #onDeleteClickHandler = (point, isNew = false) => {
+    if (isNew) {
+      remove(this.#eventEditComponent);
+    } else {
+      this.#onDataChange(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point,
+      );
+    }
+  };
+
   #onStarClick = () => {
-    this.#onDatachange({...this.#event, isFavorite: !this.#event.isFavorite});
+    this.#onDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#event, isFavorite: !this.#event.isFavorite},
+    );
   };
 }

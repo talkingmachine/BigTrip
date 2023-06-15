@@ -16,8 +16,9 @@ function createHeaderTemplate(tripCities, tripDates, totalPrice) {
 }
 
 export default class HeaderView extends AbstractView{
-  #points;
-  constructor(points) {
+  #points = null;
+
+  constructor({points}) {
     super();
     this.#points = points;
   }

@@ -4,15 +4,21 @@ import HeaderView from '../view/header.js';
 export default class HeaderPresenter {
   #tripMainElement = null;
   #points = null;
+  #addNewPointHandler = null;
 
-  constructor({tripMainElement, points}) {
+  constructor({tripMainElement, points, addNewPointHandler}) {
     this.#tripMainElement = tripMainElement;
     this.#points = points;
+    this.#addNewPointHandler = addNewPointHandler;
   }
 
   init() {
     if (this.#points.length > 0) {
-      render(new HeaderView(this.#points), this.#tripMainElement, RenderPosition.AFTERBEGIN);
+      const headerView = new HeaderView({
+        points: this.#points,
+        addNewPointHandler: this.#addNewPointHandler
+      });
+      render(headerView, this.#tripMainElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

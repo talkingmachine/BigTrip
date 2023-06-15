@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getHumanizedDate, getHumanizedTime, getStartEndTime,toCapitalized } from '../utils.js';
+import { getHumanizedDate, getHumanizedTime, getStartEndTime,toCapitalized } from '../utils/utils.js';
 import { getEventOffers } from './get-event-offers.js';
 
 function createEventTemplate(point, offers) {

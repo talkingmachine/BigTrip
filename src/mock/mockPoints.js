@@ -14,8 +14,8 @@ export const getMockPoints = () => ([
   {
     id: 'test-id1',
     basePrice: 5000,
-    dateFrom: '2019-07-12T14:55:55.845Z',
-    dateTo: '2019-07-12T17:02:03.375Z',
+    dateFrom: '2023-02-07T14:55:55.845Z',
+    dateTo: '2023-11-08T17:02:03.375Z',
     destination: 'Chamonix',
     isFavorite: true,
     offers: [
@@ -27,8 +27,8 @@ export const getMockPoints = () => ([
   {
     id: 'test-id2',
     basePrice: 20,
-    dateFrom: '2019-07-12T18:55:55.845Z',
-    dateTo: '2019-07-12T23:02:03.375Z',
+    dateFrom: '2024-07-12T18:55:55.845Z',
+    dateTo: '2024-07-12T23:02:03.375Z',
     destination: 'Alaska',
     isFavorite: true,
     offers: [
