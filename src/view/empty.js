@@ -29,6 +29,8 @@ export default class EmptyView extends AbstractView{
         return 'There are no present events now';
       case FILTER_TYPES.Future:
         return 'There are no future events now';
+      case FILTER_TYPES.Loading:
+        return 'Loading...';
     }
     return '';
   }

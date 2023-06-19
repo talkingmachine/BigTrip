@@ -79,7 +79,7 @@ function createEventEditTemplate({point, destination, destinationsList, offers, 
           <label class="event__label  event__type-output" for="event-destination-1">
             ${toCapitalized(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           ${getEventEditDatalist(destinationsList)}
         </div>
 
@@ -265,7 +265,7 @@ export default class EventEditView extends AbstractStatefulView{
   }
 
   #pickCurrentDestination() {
-    const currentDestination = this.#destinations.find((destination) => destination.name === this._state.destination);
+    const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
     if (currentDestination) {
       return currentDestination;
     }

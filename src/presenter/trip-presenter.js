@@ -5,8 +5,9 @@ import EventPresenter from './event-presenter.js';
 import HeaderPresenter from './header-presenter.js';
 import SortView from '../view/sort.js';
 import { eventsByPrice, eventsByTime } from '../utils/sort-filter-options.js';
-import { SORT_TYPE, UpdateType, UserAction } from '../consts.js';
+import { FILTER_TYPES, SORT_TYPE, UpdateType, UserAction } from '../consts.js';
 import { DEFAULT_POINT } from '../consts.js';
+
 
 export default class TripPresenter {
   #eventsListComponent = new EventsListView();
@@ -20,6 +21,7 @@ export default class TripPresenter {
   #filtersModel = null;
   #currentSortType = SORT_TYPE.byDay;
   #eventPresenters = new Map();
+  #loadedData = 0;
 
   constructor({headerContainerElement, listContainerElement, pointsModel, offersModel, destinationsModel, filtersModel}) {
     this.#headerContainerElement = headerContainerElement;
@@ -29,9 +31,19 @@ export default class TripPresenter {
     this.#destinationsModel = destinationsModel;
     this.#filtersModel = filtersModel;
 
-    this.#filtersModel.addObserver(() => this.#handleViewAction(UpdateType.MINOR));
-    this.#filtersModel.addObserver(() => this.#updateEmpty(this.#filtersModel.filter));
-    this.#pointsModel.addObserver(() => this.#handleViewAction(UpdateType.MINOR));
+    this.#filtersModel.addObserver(() => {
+      this.#handleViewAction(UpdateType.MINOR);
+      this.#updateEmpty(this.#filtersModel.filter);
+    });
+    this.#pointsModel.addObserver((updateType, data) => {
+      this.#handleViewAction(updateType, data);
+    });
+    this.#offersModel.addObserver((updateType, data) => {
+      this.#handleViewAction(updateType, data);
+    });
+    this.#destinationsModel.addObserver((updateType, data) => {
+      this.#handleViewAction(updateType, data);
+    });
 
     this.#newEventButtonElement.addEventListener('click', this.#addNewPointHandler);
     // Вопрос. Есть ли смысл для единообразия стиля делать свой view для кнопки добавления ивента?
@@ -58,9 +70,8 @@ export default class TripPresenter {
 
   init() {
     this.#renderSort();
-    this.#renderHeader();
-    this.#renderEvents();
-    this.#updateEmpty();
+    this.#renderEventsList();
+    this.#updateEmpty(FILTER_TYPES.Loading);
   }
 
   #sortPointsHandler = (sortType) => {
@@ -98,6 +109,13 @@ export default class TripPresenter {
         this.#clearEvents({resetSortType: true});
         this.#renderEvents();
         break;
+      case UpdateType.INIT:
+        this.#loadedData += 1;
+        if (this.#loadedData === 3) {
+          this.#updateEmpty();
+          this.#renderHeader();
+          this.#renderEvents();
+        }
     }
   };
 
@@ -121,12 +139,14 @@ export default class TripPresenter {
     }
   }
 
-  #renderEvents() {
+  #renderEventsList() {
     if (!this.#listContainerElement.contains(this.#eventsListComponent.element)) {
       render(this.#eventsListComponent, this.#listContainerElement);
     }
-    this.#updateEmpty(this.#filtersModel.filter);
+  }
 
+  #renderEvents() {
+    this.#updateEmpty(this.#filtersModel.filter);
     for (let i = 0; i < this.points.length; i++) {
       this.#renderEvent(this.points[i]);
     }
@@ -160,6 +180,7 @@ export default class TripPresenter {
     const headerPresenter = new HeaderPresenter({
       tripMainElement: this.#headerContainerElement,
       points: this.points,
+      destinations: this.destinations
     });
     headerPresenter.init();
   }

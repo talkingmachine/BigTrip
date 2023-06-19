@@ -1,15 +1,28 @@
+import { UpdateType } from '../consts';
 import Observable from '../framework/observable';
-import { getMockOffers } from '../mock/mockOffers';
 
 class OffersModel extends Observable{
-  #offers = getMockOffers();
+  #offers = [];
+  #offersApiService = null;
+
+  constructor ({offersApiService}) {
+    super();
+    this.#offersApiService = offersApiService;
+  }
+
+  async init () {
+    try {
+      const apiResponse = await this.#offersApiService.offers;
+      this.#offers = apiResponse;
+      this._notify(UpdateType.INIT);
+      //console.log(this.#offers);
+    } catch(err) {
+      this.#offers = [];
+    }
+  }
 
   get offers() {
     return this.#offers;
-  }
-
-  set offers(offers) {
-    this.#offers = offers;
   }
 }
 

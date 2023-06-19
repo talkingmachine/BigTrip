@@ -38,6 +38,7 @@ export default class EventPresenter {
     this.#eventComponent = new EventView({
       point: this.#event,
       offers: this.#currentTypeOffers.filter((offer) => this.#currentPointOffersList.includes(offer.id)),
+      destination: this.#destinations.find((destination) => destination.id === this.#event.destination).name,
       replaceEventToEdit: this.#replaceEventToEdit,
       onEscKeydownHandler: this.#onEscKeydownHandler,
       onStarClickHandler: this.#onStarClick
