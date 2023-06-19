@@ -17,10 +17,12 @@ function createHeaderTemplate(tripCities, tripDates, totalPrice) {
 
 export default class HeaderView extends AbstractView{
   #points = null;
+  #destinations = null;
 
-  constructor({points}) {
+  constructor({points, destinations}) {
     super();
     this.#points = points;
+    this.#destinations = destinations;
   }
 
   get template() {
@@ -28,7 +30,7 @@ export default class HeaderView extends AbstractView{
   }
 
   #getTripCities() {
-    const cities = this.#points.map((point) => point.destination);
+    const cities = this.#points.map((point) => this.#destinations.find((destination) => destination.id === point.destination).name);
     if (cities.length <= 3) {
       return cities.join(' &mdash; ');
     } else {

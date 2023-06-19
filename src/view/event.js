@@ -2,8 +2,8 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getHumanizedDate, getHumanizedTime, getStartEndTime,toCapitalized } from '../utils/utils.js';
 import { getEventOffers } from './get-event-offers.js';
 
-function createEventTemplate(point, offers) {
-  const {basePrice, dateFrom, dateTo, destination, type, isFavorite} = point;
+function createEventTemplate(point, offers, destination) {
+  const {basePrice, dateFrom, dateTo, type, isFavorite} = point;
 
   return (`
   <li class="trip-events__item">
@@ -42,16 +42,18 @@ function createEventTemplate(point, offers) {
 }
 
 export default class EventView extends AbstractView {
-  #point;
-  #offers;
-  #replaceEventToEdit;
-  #onEscKeydownHandler;
-  #onStarClickHandler;
+  #point = null;
+  #offers = null;
+  #destination = null;
+  #replaceEventToEdit = null;
+  #onEscKeydownHandler = null;
+  #onStarClickHandler = null;
 
-  constructor({point, offers, replaceEventToEdit, onEscKeydownHandler, onStarClickHandler}) {
+  constructor({point, offers, destination, replaceEventToEdit, onEscKeydownHandler, onStarClickHandler}) {
     super();
     this.#point = point;
     this.#offers = offers;
+    this.#destination = destination;
     this.#replaceEventToEdit = replaceEventToEdit;
     this.#onEscKeydownHandler = onEscKeydownHandler;
     this.#onStarClickHandler = onStarClickHandler;
@@ -61,7 +63,7 @@ export default class EventView extends AbstractView {
   }
 
   get template() {
-    return createEventTemplate(this.#point, this.#offers);
+    return createEventTemplate(this.#point, this.#offers, this.#destination);
   }
 
   #rollupClickHandler = () => {

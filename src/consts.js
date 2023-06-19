@@ -36,11 +36,13 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 export const FILTER_TYPES = {
   Everything: 'Everthing',
   Past: 'Past',
   Present: 'Present',
-  Future: 'Future'
+  Future: 'Future',
+  Loading: 'Loading'
 };
 
