@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getHumanizedDate, getHumanizedTime, getStartEndTime,toCapitalized } from '../utils/utils.js';
 import { getEventOffers } from './get-event-offers.js';
 
-function createEventTemplate(point, offers, destination) {
+function createEventTemplate(point, offers, destinationName) {
   const {basePrice, dateFrom, dateTo, type, isFavorite} = point;
 
   return (`
@@ -12,7 +12,7 @@ function createEventTemplate(point, offers, destination) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${toCapitalized(type)} ${destination}</h3>
+      <h3 class="event__title">${toCapitalized(type)} ${destinationName}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${getHumanizedTime(dateFrom)}</time>
@@ -44,16 +44,16 @@ function createEventTemplate(point, offers, destination) {
 export default class EventView extends AbstractView {
   #point = null;
   #offers = null;
-  #destination = null;
+  #destinationName = null;
   #replaceEventToEdit = null;
   #onEscKeydownHandler = null;
   #onStarClickHandler = null;
 
-  constructor({point, offers, destination, replaceEventToEdit, onEscKeydownHandler, onStarClickHandler}) {
+  constructor({point, offers, destinationName, replaceEventToEdit, onEscKeydownHandler, onStarClickHandler}) {
     super();
     this.#point = point;
     this.#offers = offers;
-    this.#destination = destination;
+    this.#destinationName = destinationName;
     this.#replaceEventToEdit = replaceEventToEdit;
     this.#onEscKeydownHandler = onEscKeydownHandler;
     this.#onStarClickHandler = onStarClickHandler;
@@ -63,7 +63,7 @@ export default class EventView extends AbstractView {
   }
 
   get template() {
-    return createEventTemplate(this.#point, this.#offers, this.#destination);
+    return createEventTemplate(this.#point, this.#offers, this.#destinationName);
   }
 
   #rollupClickHandler = () => {
