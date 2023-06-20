@@ -1,4 +1,4 @@
-import { UpdateType, UserAction } from '../consts.js';
+import { DEFAULT_DESTINATION, UpdateType, UserAction } from '../consts.js';
 import { RenderPosition, remove, render, replace } from '../framework/render.js';
 import EventEditView from '../view/event-edit.js';
 import EventView from '../view/event.js';
@@ -38,7 +38,7 @@ export default class EventPresenter {
     this.#eventComponent = new EventView({
       point: this.#event,
       offers: this.#currentTypeOffers.filter((offer) => this.#currentPointOffersList.includes(offer.id)),
-      destination: this.#destinations.find((destination) => destination.id === this.#event.destination).name,
+      destinationName: this.#isNew ? DEFAULT_DESTINATION.name : this.#destinations.find((destination) => destination.id === this.#event.destination).name,
       replaceEventToEdit: this.#replaceEventToEdit,
       onEscKeydownHandler: this.#onEscKeydownHandler,
       onStarClickHandler: this.#onStarClick
@@ -95,22 +95,24 @@ export default class EventPresenter {
     replace(this.#eventComponent, this.#eventEditComponent);
   };
 
-  #onFormSubmitHandler = (point) => {
-    try {
-      this.#onDataChange(
+  #onFormSubmitHandler = async (point, isNew = false) => {
+    const submitAction = isNew ?
+      () => this.#onDataChange(
+        UserAction.ADD_POINT,
+        UpdateType.MINOR,
+        point,
+      )
+      :
+      () => this.#onDataChange(
         UserAction.UPDATE_POINT,
         UpdateType.MINOR,
         point,
       );
-    } catch {
-      this.#onDataChange(
-        UserAction.ADD_POINT,
-        UpdateType.MINOR,
-        point,
-      );
-    }
-
-    this.#replaceEditToEvent();
+    submitAction()
+      .then(this.#replaceEditToEvent)
+      .catch(() => {
+        this.#eventEditComponent.rerenderElement();
+      });
   };
 
   #onFormCloseClickHandler = () => {

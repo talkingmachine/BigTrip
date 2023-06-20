@@ -46,8 +46,7 @@ export default class TripPresenter {
     });
 
     this.#newEventButtonElement.addEventListener('click', this.#addNewPointHandler);
-    // Вопрос. Есть ли смысл для единообразия стиля делать свой view для кнопки добавления ивента?
-    // Или можно так оставить. Просто на этом лиснере ее функционал заканчивается
+    //
   }
 
   get points() {
@@ -82,16 +81,16 @@ export default class TripPresenter {
     }
   };
 
-  #handleModelEvent = (actionType, updateType, update) => {
+  #handleModelEvent = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        await this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        await this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        await this.#pointsModel.deletePoint(updateType, update);
         break;
     }
   };
