@@ -1,4 +1,4 @@
-import { FILTER_TYPES } from '../consts';
+import { FilterTypes } from '../consts';
 import AbstractView from '../framework/view/abstract-view';
 
 
@@ -21,15 +21,15 @@ export default class EmptyView extends AbstractView{
 
   #getMessage() {
     switch (this.#filterType) {
-      case FILTER_TYPES.Everything:
+      case FilterTypes.Everything:
         return 'Click New Event to create your first point';
-      case FILTER_TYPES.Past:
+      case FilterTypes.Past:
         return 'There are no past events now';
-      case FILTER_TYPES.Present:
+      case FilterTypes.Present:
         return 'There are no present events now';
-      case FILTER_TYPES.Future:
+      case FilterTypes.Future:
         return 'There are no future events now';
-      case FILTER_TYPES.Loading:
+      case FilterTypes.Loading:
         return 'Loading...';
     }
     return '';

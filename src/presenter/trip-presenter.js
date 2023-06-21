@@ -1,11 +1,11 @@
 import { render, replace } from '../framework/render.js';
-import EventsListView from '../view/events-list.js';
-import EmptyView from '../view/empty.js';
+import EventsListView from '../view/events-list-view.js';
+import EmptyView from '../view/empty-view.js';
 import EventPresenter from './event-presenter.js';
 import HeaderPresenter from './header-presenter.js';
 import SortView from '../view/sort.js';
-import { eventsByPrice, eventsByTime } from '../utils/sort-filter-options.js';
-import { FILTER_TYPES, SORT_TYPE, UpdateType, UserAction } from '../consts.js';
+import { sortEventsByPrice, sortEventsByTime } from '../utils/sort-filter-options.js';
+import { FilterTypes, SortType, UpdateType, UserAction } from '../consts.js';
 import { DEFAULT_POINT } from '../consts.js';
 
 
@@ -19,7 +19,7 @@ export default class TripPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #filtersModel = null;
-  #currentSortType = SORT_TYPE.byDay;
+  #currentSortType = SortType.byDay;
   #eventPresenters = new Map();
   #loadedData = 0;
 
@@ -46,15 +46,14 @@ export default class TripPresenter {
     });
 
     this.#newEventButtonElement.addEventListener('click', this.#addNewPointHandler);
-    //
   }
 
   get points() {
     switch (this.#currentSortType) {
-      case SORT_TYPE.byTime:
-        return [...this.#pointsModel.points].sort(eventsByTime).filter(this.#filtersModel.filterCallback);
-      case SORT_TYPE.byPrice:
-        return [...this.#pointsModel.points].sort(eventsByPrice).filter(this.#filtersModel.filterCallback);
+      case SortType.byTime:
+        return [...this.#pointsModel.points].sort(sortEventsByTime).filter(this.#filtersModel.filterCallback);
+      case SortType.byPrice:
+        return [...this.#pointsModel.points].sort(sortEventsByPrice).filter(this.#filtersModel.filterCallback);
     }
     return this.#pointsModel.points.filter(this.#filtersModel.filterCallback);
   }
@@ -70,7 +69,7 @@ export default class TripPresenter {
   init() {
     this.#renderSort();
     this.#renderEventsList();
-    this.#updateEmpty(FILTER_TYPES.Loading);
+    this.#updateEmpty(FilterTypes.Loading);
   }
 
   #sortPointsHandler = (sortType) => {
@@ -134,7 +133,7 @@ export default class TripPresenter {
     this.#eventPresenters.clear();
 
     if (resetSortType) {
-      this.#currentSortType = SORT_TYPE.byDay;
+      this.#currentSortType = SortType.byDay;
     }
   }
 

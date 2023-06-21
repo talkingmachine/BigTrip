@@ -1,6 +1,6 @@
-import { DATE_FORMATS, DEFAULT_DESTINATION, EDIT_BUTTONS_TEXT } from '../consts';
+import { DEFAULT_DESTINATION, DateFormats, EditButtonsText } from '../consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { toCapitalized } from '../utils/utils';
+import { capitalize} from '../utils/utils';
 import { getDestinationPictures } from './get-destination-pictures';
 import { getEventEditOffers } from './get-event-edit-offers';
 import flatpickr from 'flatpickr';
@@ -77,7 +77,7 @@ function createEventEditTemplate({point, destination, destinationsList, offers, 
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${toCapitalized(type)}
+            ${capitalize(type)}
           </label>
           <input
             class="event__input  event__input--destination" id="event-destination-1"
@@ -170,7 +170,7 @@ export default class EventEditView extends AbstractStatefulView{
       destination: this.#pickCurrentDestination(),
       destinationsList: this.#destinations,
       offers: this.#pickCurrentTypeOffers(),
-      isLocked: this._state.saveBtnText === EDIT_BUTTONS_TEXT.Saving || this._state.deleteBtnText === EDIT_BUTTONS_TEXT.Deleting
+      isLocked: this._state.saveBtnText === EditButtonsText.Saving || this._state.deleteBtnText === EditButtonsText.Deleting
     });
   }
 
@@ -206,8 +206,8 @@ export default class EventEditView extends AbstractStatefulView{
   #pointToState(point) {
     const newState = {
       ...point,
-      saveBtnText: EDIT_BUTTONS_TEXT.Save,
-      deleteBtnText: this.#isNew ? EDIT_BUTTONS_TEXT.Cancel : EDIT_BUTTONS_TEXT.Delete
+      saveBtnText: EditButtonsText.Save,
+      deleteBtnText: this.#isNew ? EditButtonsText.Cancel : EditButtonsText.Delete
     };
 
     return newState;
@@ -225,7 +225,7 @@ export default class EventEditView extends AbstractStatefulView{
     this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
-        dateFormat: DATE_FORMATS.edit,
+        dateFormat: DateFormats.edit,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
         enableTime: true,
@@ -234,7 +234,7 @@ export default class EventEditView extends AbstractStatefulView{
     this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
-        dateFormat: DATE_FORMATS.edit,
+        dateFormat: DateFormats.edit,
         defaultDate: this._state.dateTo,
         onChange: this.#dateToChangeHandler,
         enableTime: true,
@@ -315,7 +315,7 @@ export default class EventEditView extends AbstractStatefulView{
 
   #deleteClickHandler = () => {
     this.updateElement({
-      deleteBtnText: EDIT_BUTTONS_TEXT.Deleting,
+      deleteBtnText: EditButtonsText.Deleting,
     });
     this.#onDeleteClickHandler(this.#stateToPoint(this._state), this.#isNew);
   };
@@ -325,7 +325,7 @@ export default class EventEditView extends AbstractStatefulView{
 
     if (this._state.destination !== DEFAULT_DESTINATION.id) {
       this.updateElement({
-        saveBtnText: EDIT_BUTTONS_TEXT.Saving
+        saveBtnText: EditButtonsText.Saving
       });
       this.#onFormSubmitHandler(this.#stateToPoint(this._state), this.#isNew);
 

@@ -1,7 +1,7 @@
 import { DEFAULT_DESTINATION, UpdateType, UserAction } from '../consts.js';
 import { RenderPosition, remove, render, replace } from '../framework/render.js';
-import EventEditView from '../view/event-edit.js';
-import EventView from '../view/event.js';
+import EventEditView from '../view/event-edit-view.js';
+import EventView from '../view/event-view.js';
 
 export default class EventPresenter {
   #eventsListContainer = null;
@@ -92,6 +92,7 @@ export default class EventPresenter {
   };
 
   #replaceEditToEvent = () => {
+    document.removeEventListener('keydown', this.#onEscKeydownHandler);
     replace(this.#eventComponent, this.#eventEditComponent);
   };
 
@@ -121,7 +122,6 @@ export default class EventPresenter {
 
   #onEscKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
-      document.removeEventListener('keydown', this.#onEscKeydownHandler);
       this.#replaceEditToEvent();
     }
   };

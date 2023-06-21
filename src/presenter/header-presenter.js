@@ -1,5 +1,5 @@
 import { RenderPosition, render } from '../framework/render.js';
-import HeaderView from '../view/header.js';
+import HeaderView from '../view/header-view.js';
 
 export default class HeaderPresenter {
   #tripMainElement = null;
