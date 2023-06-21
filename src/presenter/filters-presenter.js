@@ -1,5 +1,5 @@
 import { render } from '../framework/render';
-import FiltersView from '../view/filters';
+import FiltersView from '../view/filters-view';
 
 export default class FiltersPresenter {
   #filtersContainerElement = null;

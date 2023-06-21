@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 
-export const DATE_FORMATS = {
+export const DateFormats = {
   time: 'HH:mm',
   date: 'MMM D',
   edit: 'd/m/Y H:i',
@@ -9,7 +9,7 @@ export const DATE_FORMATS = {
 export const DEFAULT_DESTINATION = {
   id: 'Unknown',
   description: 'Sorry, destination unknown',
-  name: 'Unknown',
+  name: '',
   pictures: [
   ]
 };
@@ -23,7 +23,7 @@ export const DEFAULT_POINT = () => ({
   type: 'taxi',
   isFavorite: false,
 });
-export const SORT_TYPE = {
+export const SortType = {
   byDay: 'sort-day',
   byTime: 'sort-time',
   byPrice: 'sort-price',
@@ -39,14 +39,14 @@ export const UpdateType = {
   MAJOR: 'MAJOR',
   INIT: 'INIT'
 };
-export const FILTER_TYPES = {
+export const FilterTypes = {
   Everything: 'Everthing',
   Past: 'Past',
   Present: 'Present',
   Future: 'Future',
   Loading: 'Loading'
 };
-export const EDIT_BUTTONS_TEXT = {
+export const EditButtonsText = {
   Save: 'Save',
   Cancel: 'Cancel',
   Delete: 'Delete',

@@ -1,6 +1,6 @@
 import { UpdateType } from '../consts';
 import Observable from '../framework/observable';
-import { eventsByDay } from '../utils/sort-filter-options';
+import { sortEventsByDay } from '../utils/sort-filter-options';
 
 class PointsModel extends Observable{
   #points = [];
@@ -15,7 +15,6 @@ class PointsModel extends Observable{
     try {
       const apiResponse = await this.#pointsApiService.points;
       this.#points = apiResponse.map(this.#adaptServerToClient);
-      //console.log(this.#points);
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#points = [];
@@ -52,7 +51,7 @@ class PointsModel extends Observable{
     this.#points = [
       this.#adaptServerToClient(newPoint),
       ...this.#points,
-    ].sort(eventsByDay);
+    ].sort(sortEventsByDay);
     this._notify(updateType, update);
   }
 

@@ -16,7 +16,6 @@ class DestinationsModel extends Observable{
       const apiResponse = await this.#destinationsApiService.destinations;
       this.#destinations = apiResponse;
       this._notify(UpdateType.INIT);
-      //console.log(this.#destinations);
     } catch(err) {
       this.#destinations = [];
     }

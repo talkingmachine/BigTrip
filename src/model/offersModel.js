@@ -15,7 +15,6 @@ class OffersModel extends Observable{
       const apiResponse = await this.#offersApiService.offers;
       this.#offers = apiResponse;
       this._notify(UpdateType.INIT);
-      //console.log(this.#offers);
     } catch(err) {
       this.#offers = [];
     }

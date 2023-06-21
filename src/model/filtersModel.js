@@ -1,6 +1,6 @@
-import { FILTER_TYPES } from '../consts';
+import { FilterTypes } from '../consts';
 import Observable from '../framework/observable';
-import { everythingEvents, futureEvents, pastEvents, presentEvents } from '../utils/sort-filter-options';
+import { filterByEverythingEvents, filterByFutureEvents, filterByPastEvents, filterByPresentEvents } from '../utils/sort-filter-options';
 
 class FiltersModel extends Observable{
   #filter = null;
@@ -8,25 +8,25 @@ class FiltersModel extends Observable{
   get filterCallback() {
     switch(this.#filter) {
       case 'future':
-        return futureEvents;
+        return filterByFutureEvents;
       case 'present':
-        return presentEvents;
+        return filterByPresentEvents;
       case 'past':
-        return pastEvents;
+        return filterByPastEvents;
     }
-    return everythingEvents;
+    return filterByEverythingEvents;
   }
 
   get filter() {
     switch(this.#filter) {
       case 'future':
-        return FILTER_TYPES.Future;
+        return FilterTypes.Future;
       case 'present':
-        return FILTER_TYPES.Present;
+        return FilterTypes.Present;
       case 'past':
-        return FILTER_TYPES.Past;
+        return FilterTypes.Past;
     }
-    return FILTER_TYPES.Everything;
+    return FilterTypes.Everything;
   }
 
   set filter(newFilter) {

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getHumanizedDate, getHumanizedTime, getStartEndTime,toCapitalized } from '../utils/utils.js';
+import { capitalize, getHumanizedDate, getHumanizedTime, getStartEndTime,} from '../utils/utils.js';
 import { getEventOffers } from './get-event-offers.js';
 
 function createEventTemplate(point, offers, destinationName) {
@@ -12,7 +12,7 @@ function createEventTemplate(point, offers, destinationName) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${toCapitalized(type)} ${destinationName}</h3>
+      <h3 class="event__title">${capitalize(type)} ${destinationName}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${getHumanizedTime(dateFrom)}</time>
