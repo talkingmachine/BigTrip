@@ -3,9 +3,9 @@ import EventsListView from '../view/events-list-view.js';
 import EmptyView from '../view/empty-view.js';
 import EventPresenter from './event-presenter.js';
 import HeaderPresenter from './header-presenter.js';
-import SortView from '../view/sort.js';
+import SortView from '../view/sort-view.js';
 import { sortEventsByPrice, sortEventsByTime } from '../utils/sort-filter-options.js';
-import { FilterTypes, SortType, UpdateType, UserAction } from '../consts.js';
+import { FilterTypes, sortType, UpdateType, UserAction } from '../consts.js';
 import { DEFAULT_POINT } from '../consts.js';
 
 
@@ -19,9 +19,8 @@ export default class TripPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #filtersModel = null;
-  #currentSortType = SortType.byDay;
+  #currentSortType = sortType.byDay;
   #eventPresenters = new Map();
-  #loadedData = 0;
 
   constructor({headerContainerElement, listContainerElement, pointsModel, offersModel, destinationsModel, filtersModel}) {
     this.#headerContainerElement = headerContainerElement;
@@ -50,9 +49,9 @@ export default class TripPresenter {
 
   get points() {
     switch (this.#currentSortType) {
-      case SortType.byTime:
+      case sortType.byTime:
         return [...this.#pointsModel.points].sort(sortEventsByTime).filter(this.#filtersModel.filterCallback);
-      case SortType.byPrice:
+      case sortType.byPrice:
         return [...this.#pointsModel.points].sort(sortEventsByPrice).filter(this.#filtersModel.filterCallback);
     }
     return this.#pointsModel.points.filter(this.#filtersModel.filterCallback);
@@ -72,9 +71,9 @@ export default class TripPresenter {
     this.#updateEmpty(FilterTypes.Loading);
   }
 
-  #sortPointsHandler = (sortType) => {
-    if (this.#currentSortType !== sortType) {
-      this.#currentSortType = sortType;
+  #sortPointsHandler = (sortingType) => {
+    if (this.#currentSortType !== sortingType) {
+      this.#currentSortType = sortingType;
       this.#clearEvents();
       this.#renderEvents();
     }
@@ -108,8 +107,7 @@ export default class TripPresenter {
         this.#renderEvents();
         break;
       case UpdateType.INIT:
-        this.#loadedData += 1;
-        if (this.#loadedData === 3) {
+        if (this.#pointsModel.isDataUploaded && this.#destinationsModel.isDataUploaded && this.#offersModel.isDataUploaded) {
           this.#updateEmpty();
           this.#renderHeader();
           this.#renderEvents();
@@ -117,7 +115,7 @@ export default class TripPresenter {
     }
   };
 
-  #pointsCloseEditMode = () => {
+  #onPointsCloseEditMode = () => {
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.closeEditMode());
   };
 
@@ -133,7 +131,7 @@ export default class TripPresenter {
     this.#eventPresenters.clear();
 
     if (resetSortType) {
-      this.#currentSortType = SortType.byDay;
+      this.#currentSortType = sortType.byDay;
     }
   }
 
@@ -156,7 +154,7 @@ export default class TripPresenter {
       offers: this.offers,
       destinations: this.destinations,
       onDataChange: this.#handleModelEvent,
-      pointsCloseEditMode: this.#pointsCloseEditMode,
+      onPointsCloseEditMode: this.#onPointsCloseEditMode,
       isNew: isNew
     });
     eventPresenter.init(event);

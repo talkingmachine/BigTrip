@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 
-export const DateFormats = {
+export const dateFormats = {
   time: 'HH:mm',
   date: 'MMM D',
   edit: 'd/m/Y H:i',
@@ -23,7 +23,7 @@ export const DEFAULT_POINT = () => ({
   type: 'taxi',
   isFavorite: false,
 });
-export const SortType = {
+export const sortType = {
   byDay: 'sort-day',
   byTime: 'sort-time',
   byPrice: 'sort-price',

@@ -13,16 +13,16 @@ export default class EventPresenter {
   #eventComponent = null;
   #eventEditComponent = null;
   #onDataChange = null;
-  #pointsCloseEditMode = null;
+  #onPointsCloseEditMode = null;
   #isNew = false;
 
 
-  constructor({eventsListContainer, offers, destinations, onDataChange, pointsCloseEditMode, isNew}) {
+  constructor({eventsListContainer, offers, destinations, onDataChange, onPointsCloseEditMode, isNew}) {
     this.#eventsListContainer = eventsListContainer;
     this.#offers = offers;
     this.#destinations = destinations;
     this.#onDataChange = onDataChange;
-    this.#pointsCloseEditMode = pointsCloseEditMode;
+    this.#onPointsCloseEditMode = onPointsCloseEditMode;
     this.#isNew = isNew;
   }
 
@@ -41,7 +41,7 @@ export default class EventPresenter {
       destinationName: this.#isNew ? DEFAULT_DESTINATION.name : this.#destinations.find((destination) => destination.id === this.#event.destination).name,
       replaceEventToEdit: this.#replaceEventToEdit,
       onEscKeydownHandler: this.#onEscKeydownHandler,
-      onStarClickHandler: this.#onStarClick
+      onStarClickHandler: this.#onStarClick,
     });
     this.#eventEditComponent = new EventEditView({
       point: this.#event,
@@ -55,7 +55,7 @@ export default class EventPresenter {
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       if (this.#isNew) {
-        this.#pointsCloseEditMode();
+        this.#onPointsCloseEditMode();
       }
       render(
         this.#isNew ? this.#eventEditComponent : this.#eventComponent,
@@ -87,12 +87,11 @@ export default class EventPresenter {
   };
 
   #replaceEventToEdit = () => {
-    this.#pointsCloseEditMode();
+    this.#onPointsCloseEditMode();
     replace(this.#eventEditComponent, this.#eventComponent);
   };
 
   #replaceEditToEvent = () => {
-    document.removeEventListener('keydown', this.#onEscKeydownHandler);
     replace(this.#eventComponent, this.#eventEditComponent);
   };
 
@@ -112,18 +111,20 @@ export default class EventPresenter {
     submitAction()
       .then(this.#replaceEditToEvent)
       .catch(() => {
-        this.#eventEditComponent.rerenderElement();
+        this.#eventEditComponent.resetElement();
       });
-  };
-
-  #onFormCloseClickHandler = () => {
-    this.#replaceEditToEvent();
   };
 
   #onEscKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
-      this.#replaceEditToEvent();
+      this.#eventEditComponent.resetElement();
+      this.#onFormCloseClickHandler();
     }
+  };
+
+  #onFormCloseClickHandler = () => {
+    document.removeEventListener('keydown', this.#onEscKeydownHandler);
+    this.#replaceEditToEvent();
   };
 
   #onDeleteClickHandler = (point, isNew = false) => {

@@ -4,6 +4,7 @@ import Observable from '../framework/observable';
 
 class DestinationsModel extends Observable{
   #destinations = [];
+  #isDataUploaded = false;
   #destinationsApiService = null;
 
   constructor ({destinationsApiService}) {
@@ -15,6 +16,7 @@ class DestinationsModel extends Observable{
     try {
       const apiResponse = await this.#destinationsApiService.destinations;
       this.#destinations = apiResponse;
+      this.#isDataUploaded = true;
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#destinations = [];
@@ -23,6 +25,10 @@ class DestinationsModel extends Observable{
 
   get destinations() {
     return this.#destinations;
+  }
+
+  get isDataUploaded() {
+    return this.#isDataUploaded;
   }
 }
 export {DestinationsModel};
