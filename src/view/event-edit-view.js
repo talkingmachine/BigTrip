@@ -1,15 +1,15 @@
-import { DEFAULT_DESTINATION, DateFormats, EditButtonsText } from '../consts';
+import { DEFAULT_DESTINATION, dateFormats, EditButtonsText } from '../consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { capitalize} from '../utils/utils';
 import { getDestinationPictures } from './get-destination-pictures';
 import { getEventEditOffers } from './get-event-edit-offers';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import { getEventEditDatalist } from './get-event-edit-datalist';
+import { getEventTypes } from './get-event-types';
 
 
-function createEventEditTemplate({point, destination, destinationsList, offers, isLocked}) {
+function createEventEditTemplate({point, destination, destinationsList, offersTypes, currentTypeOffers, isLocked}) {
   const {basePrice, type, saveBtnText, deleteBtnText} = point;
 
   return `
@@ -25,59 +25,14 @@ function createEventEditTemplate({point, destination, destinationsList, offers, 
 
           <div class="event__type-list">
             <fieldset class="event__type-group" ${isLocked ? 'disabled' : ''}>
-              <legend class="visually-hidden">Event type</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === 'taxi' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === 'bus' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === 'train' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === 'ship' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === 'drive' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === 'flight' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === 'check-in' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type === 'sightseeing' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === 'restaurant' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${getEventTypes(offersTypes, type)}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${capitalize(type)}
+            ${type}
           </label>
           <input
             class="event__input  event__input--destination" id="event-destination-1"
@@ -123,7 +78,7 @@ function createEventEditTemplate({point, destination, destinationsList, offers, 
         </button>
       </header>
       <section class="event__details">
-        ${getEventEditOffers(offers, point.offers, isLocked)}
+        ${getEventEditOffers(currentTypeOffers, point.offers, isLocked)}
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -169,7 +124,8 @@ export default class EventEditView extends AbstractStatefulView{
       point: this._state,
       destination: this.#pickCurrentDestination(),
       destinationsList: this.#destinations,
-      offers: this.#pickCurrentTypeOffers(),
+      offersTypes: this.#pickOffersTypes(),
+      currentTypeOffers: this.#pickCurrentTypeOffers(),
       isLocked: this._state.saveBtnText === EditButtonsText.Saving || this._state.deleteBtnText === EditButtonsText.Deleting
     });
   }
@@ -199,7 +155,7 @@ export default class EventEditView extends AbstractStatefulView{
     }
   }
 
-  rerenderElement() {
+  resetElement() {
     this.updateElement(this.#pointToState(this.#point));
   }
 
@@ -225,7 +181,7 @@ export default class EventEditView extends AbstractStatefulView{
     this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
-        dateFormat: DateFormats.edit,
+        dateFormat: dateFormats.edit,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
         enableTime: true,
@@ -234,7 +190,7 @@ export default class EventEditView extends AbstractStatefulView{
     this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
-        dateFormat: DateFormats.edit,
+        dateFormat: dateFormats.edit,
         defaultDate: this._state.dateTo,
         onChange: this.#dateToChangeHandler,
         enableTime: true,
@@ -291,6 +247,10 @@ export default class EventEditView extends AbstractStatefulView{
     }
   };
 
+  #pickOffersTypes() {
+    return this.#offers.map((offer) => offer.type);
+  }
+
   #pickCurrentTypeOffers() {
     const currentTypeOffers = this.#offers.find((offer) => offer.type === this._state.type);
     return currentTypeOffers ? currentTypeOffers.offers : [];
@@ -309,7 +269,6 @@ export default class EventEditView extends AbstractStatefulView{
       this.#deleteClickHandler();
       return;
     }
-    this.updateElement(this.#point);
     this.#onFormCloseClickHandler();
   };
 
@@ -323,7 +282,11 @@ export default class EventEditView extends AbstractStatefulView{
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    if (this._state.destination !== DEFAULT_DESTINATION.id) {
+    if (
+      this._state.destination !== DEFAULT_DESTINATION.id &&
+      this._state.destination !== DEFAULT_DESTINATION.name &&
+      this._state.basePrice > 0
+    ) {
       this.updateElement({
         saveBtnText: EditButtonsText.Saving
       });
@@ -332,6 +295,8 @@ export default class EventEditView extends AbstractStatefulView{
       if (this.#isNew) {
         this.#isNew = false;
       }
+    } else {
+      this.shake();
     }
   };
 }

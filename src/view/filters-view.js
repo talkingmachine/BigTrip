@@ -1,26 +1,53 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-function createFiltersTemplate(currentFilter) {
-
+function createFiltersTemplate({currentFilter, activeFilters}) {
   return `
   <form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${currentFilter === 'everything' ? 'checked' : ''}>
+      <input id="filter-everything"
+      class="trip-filters__filter-input  visually-hidden"
+      type="radio"
+      name="trip-filter"
+      value="everything"
+      ${currentFilter === 'everything' ? 'checked' : ''}
+      ${!activeFilters.everything ? 'disabled=""' : ''}
+    >
       <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
     </div>
 
     <div class="trip-filters__filter">
-      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${currentFilter === 'future' ? 'checked' : ''}>
+      <input id="filter-future"
+      class="trip-filters__filter-input visually-hidden"
+      type="radio"
+      name="trip-filter"
+      value="future"
+      ${currentFilter === 'future' ? 'checked' : ''}
+      ${!activeFilters.future ? 'disabled=""' : ''}
+    >
       <label class="trip-filters__filter-label" for="filter-future">Future</label>
     </div>
 
     <div class="trip-filters__filter">
-      <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present" ${currentFilter === 'present' ? 'checked' : ''}>
+      <input id="filter-present"
+      class="trip-filters__filter-input  visually-hidden"
+      type="radio"
+      name="trip-filter"
+      value="present"
+      ${currentFilter === 'present' ? 'checked' : ''}
+      ${!activeFilters.present ? 'disabled=""' : ''}
+    >
       <label class="trip-filters__filter-label" for="filter-present">Present</label>
     </div>
 
     <div class="trip-filters__filter">
-      <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" ${currentFilter === 'past' ? 'checked' : ''}>
+      <input id="filter-past"
+      class="trip-filters__filter-input  visually-hidden"
+      type="radio"
+      name="trip-filter"
+      value="past"
+      ${currentFilter === 'past' ? 'checked' : ''}
+      ${!activeFilters.past ? 'disabled=""' : ''}
+    >
       <label class="trip-filters__filter-label" for="filter-past">Past</label>
     </div>
 
@@ -29,20 +56,37 @@ function createFiltersTemplate(currentFilter) {
 }
 
 
-export default class FiltersView extends AbstractView{
-  #currentFilter = null;
+export default class FiltersView extends AbstractStatefulView{
   #filterChangeHandler = null;
 
-  constructor({currentFilter, filterChangeHandler}) {
+  constructor({currentFilter, activeFilters, filterChangeHandler}) {
     super();
-    this.#currentFilter = currentFilter;
     this.#filterChangeHandler = filterChangeHandler;
+    this._setState({
+      currentFilter,
+      activeFilters
+    });
+    this._restoreHandlers();
+  }
 
-    this.element.addEventListener('change', this.#filterChangeHandler);
+  _restoreHandlers() {
+    this.element.addEventListener('change', (evt) => this.onFilterChange(evt.target.value));
   }
 
   get template() {
-    return createFiltersTemplate(this.#currentFilter);
+    return createFiltersTemplate(this._state);
   }
 
+  onFilterChange = (newFilter) => {
+    this.updateElement({
+      currentFilter: newFilter
+    });
+    this.#filterChangeHandler(newFilter);
+  };
+
+  onPointsChange = (newActiveFilters) => {
+    this.updateElement({
+      activeFilters: newActiveFilters
+    });
+  };
 }

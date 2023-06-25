@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { DateFormats } from '../consts';
+import { dateFormats } from '../consts';
 
 
 export const getStartEndTime = (dateFrom, dateTo) => {
@@ -21,6 +21,6 @@ export const getStartEndTime = (dateFrom, dateTo) => {
   }
 };
 
-export const getHumanizedTime = (date) => dayjs(date).format(DateFormats.time);
-export const getHumanizedDate = (date) => dayjs(date).format(DateFormats.date);
-export const capitalize = (str) => str[0] + str.slice(1);
+export const getHumanizedTime = (date) => dayjs(date).format(dateFormats.time);
+export const getHumanizedDate = (date) => dayjs(date).format(dateFormats.date);
+export const capitalize = (str) => str[0].toUpperCase() + str.slice(1);

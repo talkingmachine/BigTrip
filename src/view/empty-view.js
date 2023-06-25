@@ -21,15 +21,15 @@ export default class EmptyView extends AbstractView{
 
   #getMessage() {
     switch (this.#filterType) {
-      case FilterTypes.Everything:
+      case FilterTypes.everything:
         return 'Click New Event to create your first point';
-      case FilterTypes.Past:
+      case FilterTypes.past:
         return 'There are no past events now';
-      case FilterTypes.Present:
+      case FilterTypes.present:
         return 'There are no present events now';
-      case FilterTypes.Future:
+      case FilterTypes.future:
         return 'There are no future events now';
-      case FilterTypes.Loading:
+      case FilterTypes.loading:
         return 'Loading...';
     }
     return '';

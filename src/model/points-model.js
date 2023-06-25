@@ -4,6 +4,7 @@ import { sortEventsByDay } from '../utils/sort-filter-options';
 
 class PointsModel extends Observable{
   #points = [];
+  #isDataUploaded = false;
   #pointsApiService = null;
 
   constructor ({pointsApiService}) {
@@ -15,6 +16,7 @@ class PointsModel extends Observable{
     try {
       const apiResponse = await this.#pointsApiService.points;
       this.#points = apiResponse.map(this.#adaptServerToClient);
+      this.#isDataUploaded = true;
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#points = [];
@@ -23,6 +25,10 @@ class PointsModel extends Observable{
 
   get points() {
     return this.#points;
+  }
+
+  get isDataUploaded() {
+    return this.#isDataUploaded;
   }
 
   async updatePoint(updateType, update) {
