@@ -46,28 +46,21 @@ export default class EventView extends AbstractView {
   #offers = null;
   #destinationName = null;
   #replaceEventToEdit = null;
-  #onEscKeydownHandler = null;
   #onStarClickHandler = null;
 
-  constructor({point, offers, destinationName, replaceEventToEdit, onEscKeydownHandler, onStarClickHandler}) {
+  constructor({point, offers, destinationName, replaceEventToEdit, onStarClickHandler}) {
     super();
     this.#point = point;
     this.#offers = offers;
     this.#destinationName = destinationName;
     this.#replaceEventToEdit = replaceEventToEdit;
-    this.#onEscKeydownHandler = onEscKeydownHandler;
     this.#onStarClickHandler = onStarClickHandler;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#replaceEventToEdit);
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#onStarClickHandler);
   }
 
   get template() {
     return createEventTemplate(this.#point, this.#offers, this.#destinationName);
   }
-
-  #rollupClickHandler = () => {
-    document.addEventListener('keydown', this.#onEscKeydownHandler);
-    this.#replaceEventToEdit();
-  };
 }

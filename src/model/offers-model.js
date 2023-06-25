@@ -15,7 +15,7 @@ class OffersModel extends Observable{
     try {
       const apiResponse = await this.#offersApiService.offers;
       this.#offers = apiResponse;
-      this.#isDataUploaded = true;
+      this.#isDataUploaded = Boolean(this.#offers.length);
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#offers = [];

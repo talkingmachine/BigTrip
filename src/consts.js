@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 export const dateFormats = {
   time: 'HH:mm',
   date: 'MMM D',
-  edit: 'd/m/Y H:i',
+  edit: 'd/m/y H:i',
 };
 export const DEFAULT_DESTINATION = {
   id: 'Unknown',
@@ -40,11 +40,11 @@ export const UpdateType = {
   INIT: 'INIT'
 };
 export const FilterTypes = {
-  Everything: 'Everthing',
-  Past: 'Past',
-  Present: 'Present',
-  Future: 'Future',
-  Loading: 'Loading'
+  everything: 'everything',
+  past: 'past',
+  present: 'present',
+  future: 'future',
+  loading: 'loading'
 };
 export const EditButtonsText = {
   Save: 'Save',

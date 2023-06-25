@@ -120,7 +120,6 @@ export default class EventEditView extends AbstractStatefulView{
   }
 
   get template() {
-
     return createEventEditTemplate({
       point: this._state,
       destination: this.#pickCurrentDestination(),
@@ -283,7 +282,11 @@ export default class EventEditView extends AbstractStatefulView{
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    if (this._state.destination !== DEFAULT_DESTINATION.id) {
+    if (
+      this._state.destination !== DEFAULT_DESTINATION.id &&
+      this._state.destination !== DEFAULT_DESTINATION.name &&
+      this._state.basePrice > 0
+    ) {
       this.updateElement({
         saveBtnText: EditButtonsText.Saving
       });
@@ -292,6 +295,8 @@ export default class EventEditView extends AbstractStatefulView{
       if (this.#isNew) {
         this.#isNew = false;
       }
+    } else {
+      this.shake();
     }
   };
 }

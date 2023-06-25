@@ -16,7 +16,7 @@ class DestinationsModel extends Observable{
     try {
       const apiResponse = await this.#destinationsApiService.destinations;
       this.#destinations = apiResponse;
-      this.#isDataUploaded = true;
+      this.#isDataUploaded = Boolean(this.#destinations.length);
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#destinations = [];
