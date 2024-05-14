@@ -7,7 +7,7 @@ import TripPresenter from './presenter/trip-presenter.js';
 import DestinationsApiService from './api/destinations-api.js';
 import OffersApiService from './api/offers-api.js';
 
-const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
+const END_POINT = 'https://20.objects.htmlacademy.pro/big-trip';
 const AUTHORIZATION = `Basic ${nanoid()}`;
 
 const siteTripMainElement = document.querySelector('.trip-main');
